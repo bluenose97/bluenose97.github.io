@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexible Tasmania Campervan Itinerary</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #56645e;
+      --paper: #fbfaf5;
+      --panel: #fffdf8;
+      --line: #d8d0c0;
+      --green: #2f6f4e;
+      --blue: #316cb0;
+      --rust: #b75f2a;
+      --violet: #7355a7;
+      --amber: #bf8b2e;
+      --shadow: 0 10px 26px rgba(27, 34, 30, .09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    button, a {
+      font: inherit;
+    }
+
+    header {
+      padding: 22px clamp(16px, 4vw, 38px) 18px;
+      border-bottom: 1px solid var(--line);
+      background: #f1efe6;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .status {
+      display: grid;
+      gap: 7px;
+      min-width: 240px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .status span {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .status b {
+      font-weight: 700;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 1280px;
+      margin: 18px auto 0;
+    }
+
+    nav a, .mode-button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .mode-button[aria-pressed="true"] {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: minmax(340px, 520px) minmax(0, 1fr);
+      gap: 18px;
+      max-width: 1280px;
+      margin: 18px auto;
+      padding: 0 clamp(16px, 4vw, 38px);
+    }
+
+    .left {
+      display: grid;
+      gap: 14px;
+    }
+
+    .map-wrap {
+      position: sticky;
+      top: 16px;
+      height: calc(100vh - 32px);
+      min-height: 560px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #e8e3d4;
+      box-shadow: var(--shadow);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f7f4eb;
+    }
+
+    h2, h3 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin-top: 16px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eee8dc;
+      color: #39453f;
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .night {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    p {
+      margin: 8px 0;
+      line-height: 1.48;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      line-height: 1.45;
+    }
+
+    li + li {
+      margin-top: 5px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .block {
+      border-left: 4px solid var(--line);
+      padding: 0 0 0 11px;
+    }
+
+    .block[data-kind="food"] { border-left-color: var(--rust); }
+    .block[data-kind="nature"] { border-left-color: var(--blue); }
+    .block[data-kind="camp"] { border-left-color: var(--green); }
+    .block[data-kind="culture"] { border-left-color: var(--violet); }
+    .block[data-kind="drive"] { border-left-color: var(--amber); }
+
+    .block-title {
+      margin: 0 0 3px;
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #39453f;
+    }
+
+    details {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf0;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      font-weight: 800;
+    }
+
+    details > div {
+      padding: 0 12px 12px;
+    }
+
+    .option-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .option {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .option strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .highlight {
+      outline: 2px solid var(--amber);
+      background: #fff7df;
+    }
+
+    .legend {
+      position: absolute;
+      z-index: 500;
+      right: 12px;
+      bottom: 18px;
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 1px solid rgba(0,0,0,.18);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, .94);
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.25);
+    }
+
+    .sources {
+      max-width: 1280px;
+      margin: 0 auto 28px;
+      padding: 0 clamp(16px, 4vw, 38px);
+    }
+
+    .sources .card-body {
+      font-size: 13px;
+    }
+
+    a {
+      color: #185f74;
+    }
+
+    @media (max-width: 980px) {
+      .top, .page {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        min-width: 0;
+      }
+
+      .map-wrap {
+        position: relative;
+        top: 0;
+        height: 54vh;
+        min-height: 360px;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        padding-top: 16px;
+      }
+
+      .card-head {
+        grid-template-columns: 1fr;
+      }
+
+      .night {
+        width: auto;
+        min-width: 34px;
+        justify-self: start;
+        padding: 0 12px;
+        border-radius: 8px;
+      }
+
+      nav a, .mode-button {
+        flex: 1 1 auto;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div>
+        <h1>Flexible Tasmania Campervan Itinerary</h1>
+        <p class="subtitle">
+          A balanced 5-night loop from Hobart with mostly free camps, a couple of worthwhile low-cost sites,
+          near-van quiet saxophone spots, winter-friendly hikes, whale lookouts, pie stops, and a calmer MONA finish.
+        </p>
+      </div>
+      <div class="status">
+        <span><b>Dates</b> Sun 26 Jul - Fri 31 Jul</span>
+        <span><b>Van</b> 1 PM pickup / 1 PM drop-off</span>
+        <span><b>Flight</b> Fri 8:00 PM from Hobart</span>
+        <span><b>Style</b> Balanced, flexible, low-stress</span>
+      </div>
+    </div>
+    <nav aria-label="Itinerary navigation">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <a href="#day4">Day 4</a>
+      <a href="#day5">Day 5</a>
+      <a href="#day6">Day 6</a>
+      <a href="#bruny">Bruny Swap</a>
+      <button class="mode-button" type="button" data-mode="clear" aria-pressed="false">Clear weather</button>
+      <button class="mode-button" type="button" data-mode="rain" aria-pressed="false">Rain / wind</button>
+      <button class="mode-button" type="button" data-mode="low" aria-pressed="false">Low energy</button>
+      <button class="mode-button" type="button" data-mode="reset" aria-pressed="false">Reset</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="left">
+      <article id="day1" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 1: Sunday 26 July - Hobart Airport to Mayfield Bay</h2>
+            <div class="tag-row">
+              <span class="tag">Drive: 2-2.5 hrs total</span>
+              <span class="tag">Camp: free</span>
+              <span class="tag">Toilets</span>
+              <span class="tag">Beach sax spot</span>
+            </div>
+          </div>
+          <div class="night">N1</div>
+        </div>
+        <div class="card-body">
+          <p>Land at <strong>12:05 PM</strong>, collect the van around <strong>1 PM</strong>, then do the unglamorous setup: water tank, groceries, gas, toilet paper, trowel, and ideally a 10L backup water cube.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Afternoon Drive</p>
+              <p>Van pickup area to Richmond: <strong>25-35 min</strong>. Richmond to Mayfield Bay: <strong>1 hr 30 min</strong>.</p>
+            </div>
+            <div class="block" data-kind="food">
+              <p class="block-title">Pie Stop</p>
+              <p><strong>Richmond Bakery</strong> for a curried scallop pie. If you are running late, save the bakery idea for another day and go straight to camp.</p>
+            </div>
+            <div class="block" data-kind="camp">
+              <p class="block-title">Camp</p>
+              <p><strong>Mayfield Bay Conservation Area.</strong> Free, toilets, beach access. Bring drinking water. Isolation is medium-high in winter, but the site is close to the road.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Quiet Sax Spot</p>
+              <p>Walk down Mayfield Beach away from other campers before sunset. Easy, close to the van, and a good first-night sound test.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Add Spiky Bridge or Orford foreshore before camp.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Prioritise groceries, water, and an early camp setup. Play sax from a sheltered beach edge only if nobody is nearby.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Skip Richmond and eat something easy near Sorell. First day is for getting the van dialled.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="day2" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 2: Monday 27 July - Mayfield Bay to Freycinet</h2>
+            <div class="tag-row">
+              <span class="tag">Drive: 1-1.5 hrs</span>
+              <span class="tag">Camp: low-cost</span>
+              <span class="tag">Water + toilets</span>
+              <span class="tag">Whale lookout</span>
+            </div>
+          </div>
+          <div class="night">N2</div>
+        </div>
+        <div class="card-body">
+          <p>This is the first “worth paying a little” night. Freycinet’s campground is not the loneliest camp in Tasmania, but for your water comfort, winter hiking access, and a near-van beach base, it earns its place.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Morning Drive</p>
+              <p>Mayfield Bay to Freycinet / Wineglass Bay car park: <strong>45-55 min</strong>.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Walk + Whale Scan</p>
+              <p><strong>Wineglass Bay Lookout</strong>, about <strong>1.5-2 hrs return</strong>. Then <strong>Cape Tourville Lighthouse</strong> for a short walk and whale scan.</p>
+            </div>
+            <div class="block" data-kind="camp">
+              <p class="block-title">Camp</p>
+              <p><strong>Richardsons Beach / Ranger Creek, Freycinet National Park.</strong> Paid but under $30 for a campervan-style unpowered site. Toilets, potable water, cold showers, BBQs, and immediate walk access.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Quiet Sax Spot</p>
+              <p>Richardsons Beach or Honeymoon Bay edges at dusk, away from tents and the visitor centre. Close to the van, not totally isolated, but workable in winter.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Extend from the lookout down to Wineglass Bay beach if you feel good and daylight is generous.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Keep it to Cape Tourville and short Freycinet lookouts. Cold rain on the Wineglass steps is not character-building in a useful way.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Skip Wineglass and do Sleepy Bay / Honeymoon Bay short walks, then make the campsite the event.</div>
+            </div>
+          </details>
+          <details>
+            <summary>More isolated free alternative</summary>
+            <div>
+              <p><strong>Lagoons Beach / Chain of Lagoons</strong> is the wilder free version: drop toilets and beach solitude, but you trade away potable water and Freycinet convenience. Choose it if you care more about isolation than comfort that night.</p>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="day3" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 3: Tuesday 28 July - Freycinet to Bicheno to Lake Leake</h2>
+            <div class="tag-row">
+              <span class="tag">Drive: 2.5-3 hrs</span>
+              <span class="tag">Camp: free</span>
+              <span class="tag">Lake quiet</span>
+              <span class="tag">Bakery + seafood</span>
+            </div>
+          </div>
+          <div class="night">N3</div>
+        </div>
+        <div class="card-body">
+          <p>Use this as the coast-to-lake reset. You get Bicheno food, another ocean scan if you want it, then a quiet inland camp where playing near the van makes sense.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Morning Drive</p>
+              <p>Freycinet to Bicheno: <strong>35-40 min</strong>. Bicheno to St Marys / Elephant Pass: <strong>40-50 min</strong>. St Marys to Lake Leake: <strong>1 hr 30 min</strong>.</p>
+            </div>
+            <div class="block" data-kind="food">
+              <p class="block-title">Food</p>
+              <p><strong>Blue Edge Bakery</strong> for a scallop pie or steak pie. <strong>Lobster Shack Tasmania</strong> if you want fresh local seafood without making it a fancy restaurant night.</p>
+            </div>
+            <div class="block" data-kind="camp">
+              <p class="block-title">Camp</p>
+              <p><strong>Lake Leake Campground.</strong> Free/council campground for self-contained vans, with toilets and BBQ facilities. Bring drinking water; the lake is a filterable backup.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Quiet Sax Spot</p>
+              <p>Park away from the boat ramp and anglers. This is one of the best near-van playing locations on the route: cold lake air, space, and very little fuss.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Add a slow Bicheno coast walk or blowhole scan before turning inland.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Make it a bakery, seafood, and warm-van day. Avoid committing to exposed walks.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Go straight from Freycinet to Lake Leake via Bicheno supplies and have a long quiet camp afternoon.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="day4" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 4: Wednesday 29 July - Lake Leake to Ross to Hartz / Arve River</h2>
+            <div class="tag-row">
+              <span class="tag">Drive: 3.5-4 hrs</span>
+              <span class="tag">Camp: free</span>
+              <span class="tag">Forest solitude</span>
+              <span class="tag">Alpine weather call</span>
+            </div>
+          </div>
+          <div class="night">N4</div>
+        </div>
+        <div class="card-body">
+          <p>This is the biggest driving day, but it buys you the forest-and-mountain night. Keep Hartz weather-led; in winter, the mountain gets to vote.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Morning Drive</p>
+              <p>Lake Leake to Ross: <strong>45-55 min</strong>. Ross to Geeveston / Arve River: <strong>about 2.5 hrs</strong>.</p>
+            </div>
+            <div class="block" data-kind="food">
+              <p class="block-title">Pie Stop</p>
+              <p><strong>Convict Coffee Cafe & Bakery</strong> in Ross, formerly Bakery 31, for the scallop-pie pilgrimage. Ross Village Bakery is the second-bakery backup.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Walk</p>
+              <p><strong>Hartz Mountains National Park</strong>: Arve Falls plus Lake Osborne is the sensible winter default, roughly <strong>1.5-2.5 hrs</strong> total.</p>
+            </div>
+            <div class="block" data-kind="camp">
+              <p class="block-title">Camp</p>
+              <p><strong>Arve River Camping and Picnic Area.</strong> Free-style forest camp with toilets, BBQs/tables, and river nearby. This is probably your best quiet near-van sax night.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Consider Hartz Peak only if visibility, wind, road, and ice conditions are all friendly.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Skip alpine exposure. Do Arve River forest, Geeveston, and a sheltered camp afternoon.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Treat Ross as the outing, then get to Arve River early and play from camp before dark.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="day5" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 5: Thursday 30 July - Arve River to Tasman Peninsula / Fortescue Bay</h2>
+            <div class="tag-row">
+              <span class="tag">Drive: 2.5-3 hrs</span>
+              <span class="tag">Camp: low-cost</span>
+              <span class="tag">Hot showers</span>
+              <span class="tag">Cliffs + whales</span>
+            </div>
+          </div>
+          <div class="night">N5</div>
+        </div>
+        <div class="card-body">
+          <p>This replaces Bruny as the recommended final night. You still get a dramatic coast, a proper wildlife/whale feel, and a special campsite, but without ferry stress before van return.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Morning Drive</p>
+              <p>Arve River to Dunalley: <strong>1 hr 45 min-2 hrs</strong>. Dunalley to Tasman Arch / Fortescue Bay area: <strong>45-60 min</strong>.</p>
+            </div>
+            <div class="block" data-kind="food">
+              <p class="block-title">Pie Stop</p>
+              <p><strong>Dunalley Bakery</strong> for a mainland-side pie stop before the Tasman Peninsula.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Lookouts / Walk</p>
+              <p>Easy stops: <strong>Tasman Arch, Devils Kitchen, Blowhole area</strong>. Bigger option: <strong>Cape Hauy</strong>, about <strong>4 hrs return</strong>, with many steps and massive sea cliffs.</p>
+            </div>
+            <div class="block" data-kind="camp">
+              <p class="block-title">Camp</p>
+              <p><strong>Fortescue Bay Campground</strong>, ideally <strong>Mill Creek</strong> for campervan shelter. Paid but excellent value: toilets, drinking water, hot showers, and direct access to Cape Hauy.</p>
+            </div>
+            <div class="block" data-kind="nature">
+              <p class="block-title">Quiet Sax Spot</p>
+              <p>Mill Creek forest edge if nobody is close, or the beach edge early evening. Still near the van, but it feels much more remote than Hobart-adjacent camping.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Do Cape Hauy. It is the big scenic payoff of the final wild day.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Stick to Tasman Arch, Devils Kitchen, Remarkable Cave, and a warm Fortescue camp. Avoid exposed cliff walks.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Skip Cape Hauy and make Fortescue Bay itself the destination. Hot shower, beach, sax, early packing.</div>
+            </div>
+          </details>
+          <details>
+            <summary>If Fortescue is full or the road feels annoying</summary>
+            <div>
+              <p><strong>Lime Bay Campground</strong> is the calmer low-cost backup: beachside, toilets, tank water that needs treatment, and a quieter near-van feel. It is less iconic than Fortescue, but very compatible with your sax/camp style.</p>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="day6" class="card day-card">
+        <div class="card-head">
+          <div>
+            <h2>Day 6: Friday 31 July - Van Return, MONA, Hobart Airport</h2>
+            <div class="tag-row">
+              <span class="tag">Van return: 1 PM</span>
+              <span class="tag">MONA: relaxed half-day</span>
+              <span class="tag">Flight: 8 PM</span>
+            </div>
+          </div>
+          <div class="night">Fri</div>
+        </div>
+        <div class="card-body">
+          <p>Keep this day clean. You are not doing Bruny in the recommended route, so there is no final-morning ferry queue.</p>
+          <div class="timeline">
+            <div class="block" data-kind="drive">
+              <p class="block-title">Morning Drive</p>
+              <p>Leave Fortescue Bay around <strong>8:30 AM</strong>. Drive to the Hobart / airport-side van drop-off area: <strong>1 hr 45 min-2 hrs</strong>, depending on the exact Camplify address.</p>
+            </div>
+            <div class="block" data-kind="culture">
+              <p class="block-title">MONA</p>
+              <p>Return the van by <strong>1 PM</strong>, then aim for MONA around <strong>2-5 PM</strong>. It is enough time for the main experience without feeling like a frantic airport layover.</p>
+            </div>
+            <div class="block" data-kind="drive">
+              <p class="block-title">Airport</p>
+              <p>Leave the MONA / Hobart area around <strong>5:30-6 PM</strong> for Hobart Airport. Flight departs <strong>8 PM</strong>.</p>
+            </div>
+          </div>
+          <details open>
+            <summary>Flexible options</summary>
+            <div class="option-grid">
+              <div class="option" data-option="clear"><strong>Clear weather</strong> Add one very short Tasman Peninsula lookout at sunrise, then leave on time.</div>
+              <div class="option" data-option="rain"><strong>Rain / wind</strong> Direct return. Let MONA be the weatherproof highlight.</div>
+              <div class="option" data-option="low"><strong>Low energy</strong> Earlier van return, longer coffee/lunch buffer, then MONA.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article id="bruny" class="card">
+        <div class="card-head">
+          <div>
+            <h2>Optional Bruny Island Swap</h2>
+            <div class="tag-row">
+              <span class="tag">Not default</span>
+              <span class="tag">Ferry timing</span>
+              <span class="tag">Good if you want oysters + island roads</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>I would only swap Bruny in if you wake up genuinely wanting island produce and ferry novelty more than Tasman Peninsula cliffs. Without the paid cruise, Bruny is lovely but less efficient for this trip.</p>
+          <p><strong>How to swap it:</strong> on Day 5, drive Arve River to Kettering, ferry to Roberts Point, do Get Shucked / Bruny Island Cheese / Adventure Bay or Fluted Cape, then camp at The Neck or The Pines. On Friday, leave early and aim for the <strong>8:30 or 8:50 AM ferry</strong> from Roberts Point back to Kettering.</p>
+          <details>
+            <summary>Friday ferry times from Bruny to Kettering</summary>
+            <div>
+              <p>Winter 2026 Roberts Point departures include: 6:30 AM weekdays only, then 7:10, 7:50, 8:30, 8:50, 9:10, 9:30, 9:50, 10:10, 10:30, 10:50, 11:10, 11:30, 12:10, 12:50, 1:30, 2:10, 2:50, 3:10, 3:30, 4:00, 4:20, 4:40, 5:00, 5:20, 6:00, 6:40, 7:15 PM. It is a queueing system, not a fixed booked departure.</p>
+            </div>
+          </details>
+        </div>
+      </article>
+    </section>
+
+    <aside class="map-wrap" aria-label="Interactive route map">
+      <div id="map"></div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--green)"></i>Camp</span>
+        <span><i class="dot" style="background:var(--rust)"></i>Food</span>
+        <span><i class="dot" style="background:var(--blue)"></i>Nature</span>
+        <span><i class="dot" style="background:var(--violet)"></i>Culture / travel</span>
+      </div>
+    </aside>
+  </main>
+
+  <section class="sources">
+    <article class="card">
+      <div class="card-head">
+        <h2>Source Notes</h2>
+      </div>
+      <div class="card-body">
+        <p>Always re-check alerts and road conditions before winter hikes. Key official/current sources used:</p>
+        <ul>
+          <li><a href="https://parks.tas.gov.au/explore-our-parks/freycinet-national-park/richardsons-beach-honeymoon-bay-and-ranger-creek-camping">Parks Tasmania: Freycinet campground</a></li>
+          <li><a href="https://parks.tas.gov.au/explore-our-parks/tasman-national-park/fortescue-bay-camping">Parks Tasmania: Fortescue Bay campground</a></li>
+          <li><a href="https://parks.tas.gov.au/explore-our-parks/tasman-national-park/cape-hauy">Parks Tasmania: Cape Hauy</a></li>
+          <li><a href="https://parks.tas.gov.au/explore-our-parks/lime-bay-state-reserve/lime-bay-camping">Parks Tasmania: Lime Bay camping</a></li>
+          <li><a href="https://www.sealink.com.au/bruny-island/ferry-information/ferry-timetable//">SeaLink Bruny Island ferry timetable</a></li>
+          <li><a href="https://ato.mona.net.au/visit">MONA visit information</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const colors = {
+      camp: "#2f6f4e",
+      food: "#b75f2a",
+      nature: "#316cb0",
+      culture: "#7355a7"
+    };
+
+    const stops = [
+      { name: "Hobart Airport", lat: -42.8361, lng: 147.5103, type: "culture", note: "Arrive Sun 12:05 PM; depart Fri 8:00 PM." },
+      { name: "Van pickup / drop-off area", lat: -42.8200, lng: 147.4400, type: "culture", note: "Approximate planning pin. Replace with exact Camplify address." },
+      { name: "Richmond Bakery", lat: -42.7351, lng: 147.4385, type: "food", note: "Day 1 curried scallop pie stop." },
+      { name: "Mayfield Bay Conservation Area", lat: -42.1680, lng: 148.0750, type: "camp", note: "Night 1. Free, toilets, beach; bring drinking water." },
+      { name: "Wineglass Bay Lookout", lat: -42.1227, lng: 148.2980, type: "nature", note: "Day 2 scenic walk, 1.5-2 hrs return to lookout." },
+      { name: "Cape Tourville Lighthouse", lat: -42.1090, lng: 148.3420, type: "nature", note: "Day 2 whale lookout and short walk." },
+      { name: "Richardsons Beach / Ranger Creek", lat: -42.1270, lng: 148.2960, type: "camp", note: "Night 2. Low-cost Freycinet camp with toilets, water, cold showers." },
+      { name: "Blue Edge Bakery, Bicheno", lat: -41.8754, lng: 148.3033, type: "food", note: "Day 3 pie stop." },
+      { name: "Lobster Shack Tasmania", lat: -41.8790, lng: 148.3090, type: "food", note: "Fresh seafood option." },
+      { name: "St Marys / Elephant Pass", lat: -41.5790, lng: 148.1870, type: "nature", note: "Short scenic stop if weather suits." },
+      { name: "Lake Leake Campground", lat: -42.0065, lng: 147.7920, type: "camp", note: "Night 3. Free, toilets, lake backup water." },
+      { name: "Ross Bakery Stop", lat: -42.0301, lng: 147.4926, type: "food", note: "Day 4 scallop pie stop." },
+      { name: "Hartz Mountains National Park", lat: -43.2225, lng: 146.7700, type: "nature", note: "Day 4 alpine walks, weather dependent." },
+      { name: "Arve River Camping Area", lat: -43.1470, lng: 146.8250, type: "camp", note: "Night 4. Free forest camp, toilets, river nearby." },
+      { name: "Dunalley Bakery", lat: -42.8896, lng: 147.8060, type: "food", note: "Day 5 pie stop." },
+      { name: "Tasman Arch / Devils Kitchen", lat: -43.0400, lng: 147.9490, type: "nature", note: "Short coastal lookouts and whale scan." },
+      { name: "Cape Hauy Track", lat: -43.1250, lng: 147.9660, type: "nature", note: "Optional 4 hr return cliff walk." },
+      { name: "Fortescue Bay Campground", lat: -43.1300, lng: 147.9600, type: "camp", note: "Night 5. Low-cost, toilets, water, hot showers." },
+      { name: "Lime Bay Backup Camp", lat: -42.9500, lng: 147.6800, type: "camp", note: "Low-cost backup: quiet beach, toilets, treat tank water." },
+      { name: "MONA", lat: -42.8120, lng: 147.2605, type: "culture", note: "Friday after van drop-off." }
+    ];
+
+    const route = [
+      [-42.8361, 147.5103],
+      [-42.8200, 147.4400],
+      [-42.7351, 147.4385],
+      [-42.1680, 148.0750],
+      [-42.1227, 148.2980],
+      [-42.1090, 148.3420],
+      [-42.1270, 148.2960],
+      [-41.8790, 148.3090],
+      [-41.5790, 148.1870],
+      [-42.0065, 147.7920],
+      [-42.0301, 147.4926],
+      [-43.2225, 146.7700],
+      [-43.1470, 146.8250],
+      [-42.8896, 147.8060],
+      [-43.0400, 147.9490],
+      [-43.1250, 147.9660],
+      [-43.1300, 147.9600],
+      [-42.8200, 147.4400],
+      [-42.8120, 147.2605],
+      [-42.8361, 147.5103]
+    ];
+
+    const map = L.map("map", { scrollWheelZoom: true }).setView([-42.35, 147.55], 8);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    const group = L.featureGroup();
+    stops.forEach((stop) => {
+      const marker = L.circleMarker([stop.lat, stop.lng], {
+        radius: 7,
+        color: "#fff",
+        weight: 2,
+        fillColor: colors[stop.type],
+        fillOpacity: 1
+      }).bindPopup(`<strong>${stop.name}</strong><br>${stop.note}`);
+      marker.addTo(group);
+    });
+    group.addTo(map);
+
+    L.polyline(route, {
+      color: "#1f5d73",
+      weight: 4,
+      opacity: .78
+    }).addTo(map);
+
+    [
+      ["1", -42.1680, 148.0750],
+      ["2", -42.1270, 148.2960],
+      ["3", -42.0065, 147.7920],
+      ["4", -43.1470, 146.8250],
+      ["5", -43.1300, 147.9600]
+    ].forEach(([label, lat, lng]) => {
+      L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: "night-label",
+          html: `<div style="background:#17211d;color:#fff;border-radius:999px;width:24px;height:24px;display:grid;place-items:center;font:700 13px system-ui;border:2px solid #fff;">${label}</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        })
+      }).addTo(map);
+    });
+
+    map.fitBounds(group.getBounds(), { padding: [28, 28] });
+
+    function setMode(mode) {
+      document.querySelectorAll(".mode-button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === mode && mode !== "reset"));
+      });
+      document.querySelectorAll(".option").forEach((option) => option.classList.remove("highlight"));
+      if (mode && mode !== "reset") {
+        document.querySelectorAll(`[data-option="${mode}"]`).forEach((option) => option.classList.add("highlight"));
+      }
+    }
+
+    document.querySelectorAll(".mode-button").forEach((button) => {
+      button.addEventListener("click", () => setMode(button.dataset.mode));
+    });
+  </script>
+</body>
+</html>
