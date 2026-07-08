@@ -194,6 +194,62 @@
     .table { width: 100%; border-collapse: collapse; font-size: .94rem; }
     .table th, .table td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; }
     .table th { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; }
+    .tracker-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 8px 0 14px;
+    }
+    .tracker-summary {
+      color: var(--muted);
+      font-size: .92rem;
+      font-weight: 760;
+    }
+    .tracker-wrap { overflow-x: auto; }
+    .tracker-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: .9rem;
+    }
+    .tracker-table th,
+    .tracker-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .tracker-table th {
+      color: var(--muted);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    .tracker-day {
+      display: grid;
+      gap: 2px;
+      min-width: 94px;
+    }
+    .tracker-date { font-weight: 850; }
+    .tracker-role { color: var(--muted); font-size: .78rem; }
+    .track-button {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+    }
+    .track-button[data-state="MIN"] { background: #fff3cf; color: var(--yellow); border-color: #efd99f; }
+    .track-button[data-state="M"] { background: #e6edf5; color: var(--blue); border-color: #c8d7ea; }
+    .track-button[data-state="FULL"] { background: #e2eee4; color: var(--green); border-color: #bdd5c3; }
+    .tracker-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
     code {
       background: #eef3eb;
       border: 1px solid var(--line);
@@ -213,6 +269,7 @@
       .hero-main, .hero-side, section { padding: 18px; }
       .week { grid-template-columns: 1fr; }
       .habit { grid-template-columns: 1fr; }
+      .tracker-table { min-width: 660px; }
     }
     @media print {
       body { background: #fff; }
@@ -253,6 +310,7 @@
       <a href="#weekly">Weekly Rhythm</a>
       <a href="#videos">Fixed Videos</a>
       <a href="#atomic">Habit System</a>
+      <a href="#tracker">Tracker</a>
       <a href="#meditation">Meditation</a>
       <a href="#back">Back Rules</a>
       <a href="#integration">Integrations</a>
@@ -364,6 +422,37 @@
       </div>
     </section>
 
+    <section id="tracker">
+      <div class="section-head">
+        <div>
+          <h2>4-Week Tracker</h2>
+          <p>Tap each day once you do something. Minimum versions count because they preserve the identity and keep the chain warm.</p>
+        </div>
+      </div>
+      <div class="tracker-tools">
+        <div class="tracker-summary" id="trackerSummary">Loading tracker...</div>
+        <button class="secondary" type="button" id="resetTracker">Reset tracker</button>
+      </div>
+      <div class="tracker-wrap">
+        <table class="tracker-table" aria-label="Four week yoga and meditation tracker">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Sunday</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+            </tr>
+          </thead>
+          <tbody id="trackerBody"></tbody>
+        </table>
+      </div>
+      <p class="tracker-note"><strong>Marks:</strong> blank = missed/not yet, <code>MIN</code> = tiny version, <code>M</code> = meditation done, <code>FULL</code> = full target for that day. On yoga days, full means yoga plus meditation. On other days, full means both meditation sits.</p>
+    </section>
+
     <section id="meditation">
       <div class="section-head">
         <div>
@@ -447,5 +536,127 @@
 
     <footer>Combined from the two yoga plans, using the Sun/Wed/Fri rhythm and the lower-decision structure from yoga-2.</footer>
   </main>
+  <script>
+    (function() {
+      var storageKey = "yogaHabitTrackerV1";
+      var startDate = new Date(2026, 6, 12);
+      var states = ["", "MIN", "M", "FULL"];
+      var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      var body = document.getElementById("trackerBody");
+      var summary = document.getElementById("trackerSummary");
+      var reset = document.getElementById("resetTracker");
+
+      function load() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey)) || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function save(data) {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      }
+
+      function roleFor(date) {
+        var day = date.getDay();
+        if (day === 0) return "Recovery yoga";
+        if (day === 3) return "Strength yoga";
+        if (day === 5) return "Mobility yoga";
+        if (day === 2) return "Training + meditation";
+        if (day === 6) return "Match + meditation";
+        return "Meditation";
+      }
+
+      function dateKey(date) {
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function labelFor(date) {
+        return dayNames[date.getDay()] + " " + date.getDate() + "/" + (date.getMonth() + 1);
+      }
+
+      function renderSummary(data) {
+        var values = Object.values(data);
+        var full = values.filter(function(value) { return value === "FULL"; }).length;
+        var meditation = values.filter(function(value) { return value === "M"; }).length;
+        var minimum = values.filter(function(value) { return value === "MIN"; }).length;
+        summary.textContent = full + " full days, " + meditation + " meditation days, " + minimum + " minimum days";
+      }
+
+      function render() {
+        var data = load();
+        body.innerHTML = "";
+
+        for (var week = 0; week < 4; week += 1) {
+          var row = document.createElement("tr");
+          var weekCell = document.createElement("th");
+          weekCell.scope = "row";
+          weekCell.textContent = "Week " + (week + 1);
+          row.appendChild(weekCell);
+
+          for (var day = 0; day < 7; day += 1) {
+            var date = new Date(startDate);
+            date.setDate(startDate.getDate() + (week * 7) + day);
+            var key = dateKey(date);
+            var value = data[key] || "";
+            var cell = document.createElement("td");
+            var wrap = document.createElement("div");
+            var dateLabel = document.createElement("div");
+            var role = document.createElement("div");
+            var button = document.createElement("button");
+
+            wrap.className = "tracker-day";
+            dateLabel.className = "tracker-date";
+            role.className = "tracker-role";
+            button.className = "track-button";
+            button.type = "button";
+            button.dataset.key = key;
+            button.dataset.state = value;
+            button.textContent = value || "Tap";
+
+            dateLabel.textContent = labelFor(date);
+            role.textContent = roleFor(date);
+
+            wrap.appendChild(dateLabel);
+            wrap.appendChild(role);
+            wrap.appendChild(button);
+            cell.appendChild(wrap);
+            row.appendChild(cell);
+          }
+
+          body.appendChild(row);
+        }
+
+        renderSummary(data);
+      }
+
+      body.addEventListener("click", function(event) {
+        var button = event.target.closest(".track-button");
+        if (!button) return;
+        var data = load();
+        var current = data[button.dataset.key] || "";
+        var next = states[(states.indexOf(current) + 1) % states.length];
+        if (next) {
+          data[button.dataset.key] = next;
+        } else {
+          delete data[button.dataset.key];
+        }
+        save(data);
+        render();
+      });
+
+      reset.addEventListener("click", function() {
+        if (!confirm("Clear all tracker marks on this device?")) return;
+        localStorage.removeItem(storageKey);
+        render();
+      });
+
+      render();
+    }());
+  </script>
 </body>
 </html>
