@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yoga, Recovery &amp; Meditation Habit Plan</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --ink: #202326;
+      --muted: #65707a;
+      --panel: #ffffff;
+      --soft: #eef3eb;
+      --line: #d8ded6;
+      --green: #3f6f4f;
+      --blue: #3f5f8c;
+      --clay: #9a5f41;
+      --red: #934b45;
+      --yellow: #a47724;
+      --shadow: 0 16px 40px rgba(39, 45, 40, .10);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+    .page { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 56px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-main, .hero-side, section {
+      background: rgba(255,255,255,.88);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main, .hero-side { border-radius: 8px; padding: 28px; }
+    section { border-radius: 8px; padding: 24px; margin: 18px 0; }
+    .kicker {
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 850;
+      font-size: .78rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.12; letter-spacing: 0; }
+    h1 { font-size: clamp(2.2rem, 5vw, 4.4rem); max-width: 820px; }
+    h2 { font-size: clamp(1.45rem, 2.4vw, 2.15rem); margin-bottom: 8px; }
+    h3 { font-size: 1.05rem; }
+    p { margin: 0; }
+    .sub { margin-top: 14px; max-width: 760px; color: var(--muted); font-size: 1.06rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: #344238;
+      font-size: .88rem;
+      font-weight: 760;
+    }
+
+    .rule {
+      background: #f2eadf;
+      border: 1px solid #dfd0bf;
+      border-radius: 8px;
+      padding: 16px;
+      color: #46372d;
+    }
+
+    .rule strong { display: block; color: var(--clay); margin-bottom: 6px; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    nav a {
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      border-radius: 999px;
+      padding: 8px 11px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 760;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p { color: var(--muted); max-width: 720px; margin-top: 6px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+
+    .card, .day, .week-day, .habit {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.66);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .week-day { min-height: 145px; }
+    .dow { font-weight: 900; margin-bottom: 5px; }
+    .role { color: var(--green); font-weight: 850; margin-bottom: 5px; }
+    .week-day p, .card p, .day p, .habit p { color: var(--muted); font-size: .92rem; }
+
+    .day { display: flex; flex-direction: column; gap: 12px; }
+    .topline { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .day-name { font-size: 1.45rem; font-weight: 950; }
+    .tag {
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #e6edf5;
+      color: var(--blue);
+      font-size: .76rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag.green { background: #e2eee4; color: var(--green); }
+    .tag.clay { background: #f1e4d8; color: var(--clay); }
+    .video { font-weight: 850; }
+    .meta { color: var(--muted); font-size: .9rem; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+    .btn, button {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: var(--green);
+      color: white;
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 850;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn.secondary, button.secondary { background: #e6edf5; color: var(--blue); }
+
+    ul { margin: 0; padding-left: 1.15rem; }
+    li { margin: 6px 0; }
+    .clean { list-style: none; padding: 0; display: grid; gap: 10px; }
+    .clean li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; margin: 0; }
+    .dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--green);
+      font-weight: 950;
+      font-size: .84rem;
+    }
+    .yellow .dot { color: var(--yellow); background: #fff3cf; }
+    .red .dot { color: var(--red); background: #fae4e2; }
+
+    .habit {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .law {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      background: var(--soft);
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-size: 1.35rem;
+      font-weight: 950;
+    }
+
+    .table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+    .table th, .table td { border-bottom: 1px solid var(--line); padding: 10px 8px; text-align: left; vertical-align: top; }
+    .table th { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; }
+    code {
+      background: #eef3eb;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-size: .9em;
+    }
+    footer { color: var(--muted); text-align: center; padding-top: 14px; font-size: .88rem; }
+
+    @media (max-width: 900px) {
+      .hero, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .week { grid-template-columns: repeat(2, 1fr); }
+      .section-head { display: block; }
+    }
+    @media (max-width: 560px) {
+      .page { width: min(100% - 22px, 1120px); padding-top: 18px; }
+      .hero-main, .hero-side, section { padding: 18px; }
+      .week { grid-template-columns: 1fr; }
+      .habit { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { width: 100%; padding: 0; }
+      .hero-main, .hero-side, section { box-shadow: none; break-inside: avoid; }
+      nav, .buttons, button { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="hero">
+      <div class="hero-main">
+        <div class="kicker">Sun / Wed / Fri routine - soccer-aware - back-aware</div>
+        <h1>Yoga, Recovery &amp; Meditation Habit Plan</h1>
+        <p class="sub">A low-decision system for reliably doing the plan: three fixed yoga sessions each week, daily meditation, clear fallback rules, and habit cues inspired by Atomic Habits principles.</p>
+        <div class="chips">
+          <span class="chip">Start: Sunday 12 July 2026</span>
+          <span class="chip">Yoga: Sun / Wed / Fri</span>
+          <span class="chip">Default: 7:30 AM</span>
+          <span class="chip">Meditation: daily</span>
+          <span class="chip">Review after 4 weeks</span>
+        </div>
+      </div>
+      <aside class="hero-side">
+        <div class="rule">
+          <strong>The one body cue</strong>
+          Move from the hips, keep ribs down, and keep the spine long. In lunges and backbends, use glutes and control rather than dumping movement into the lower back.
+        </div>
+        <p class="meta" style="margin-top:14px;"><strong>Default rule:</strong> repeat the same three videos for 4 weeks. No browsing unless a video genuinely fails the green/yellow/red rule.</p>
+        <div class="buttons" style="margin-top:14px;">
+          <button onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </aside>
+    </div>
+
+    <nav>
+      <a href="#weekly">Weekly Rhythm</a>
+      <a href="#videos">Fixed Videos</a>
+      <a href="#atomic">Habit System</a>
+      <a href="#meditation">Meditation</a>
+      <a href="#back">Back Rules</a>
+      <a href="#integration">Integrations</a>
+    </nav>
+
+    <section id="weekly">
+      <div class="section-head">
+        <div>
+          <h2>Weekly Rhythm</h2>
+          <p>Sunday recovers from Saturday soccer, Wednesday builds strength far enough from Tuesday training, and Friday primes movement without tiring the legs.</p>
+        </div>
+      </div>
+      <div class="week">
+        <div class="week-day"><div class="dow">Sunday</div><div class="role">Recovery yoga</div><p>30 min gentle/back-aware yoga, then 30 min meditation.</p></div>
+        <div class="week-day"><div class="dow">Monday</div><div class="role">Meditation only</div><p>15 min morning and 15 min evening.</p></div>
+        <div class="week-day"><div class="dow">Tuesday</div><div class="role">Soccer training</div><p>15 min morning and 15 min evening. Keep it easy.</p></div>
+        <div class="week-day"><div class="dow">Wednesday</div><div class="role">Strength + mobility</div><p>30 min controlled full-body yoga, then 30 min meditation.</p></div>
+        <div class="week-day"><div class="dow">Thursday</div><div class="role">Meditation only</div><p>15 min morning and 15 min evening.</p></div>
+        <div class="week-day"><div class="dow">Friday</div><div class="role">Mobility prime</div><p>30 min light mobility yoga, then 30 min meditation.</p></div>
+        <div class="week-day"><div class="dow">Saturday</div><div class="role">11-a-side soccer</div><p>15 min morning and 15 min evening. Match day wins.</p></div>
+      </div>
+    </section>
+
+    <section id="videos">
+      <div class="section-head">
+        <div>
+          <h2>Fixed 4-Week Video Rotation</h2>
+          <p>These are the defaults. Repeating them is the point: fewer choices, faster start, easier streak.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="day">
+          <div class="topline">
+            <div><div class="day-name">Sunday</div><div class="meta">Recovery / low back / hamstrings</div></div>
+            <span class="tag green">Gentle</span>
+          </div>
+          <div class="video">Yoga With Adriene - Yoga For Low Back and Hamstrings</div>
+          <p>Best after Saturday soccer: low-to-the-ground, calm, and unlikely to make the body feel worked.</p>
+          <div class="buttons">
+            <a class="btn" href="https://www.youtube.com/watch?v=2xF_teT2_V0" target="_blank" rel="noopener">Open video</a>
+            <a class="btn secondary" href="https://www.youtube.com/results?search_query=gentle+yoga+low+back+hamstrings+30+minutes" target="_blank" rel="noopener">Backup search</a>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="topline">
+            <div><div class="day-name">Wednesday</div><div class="meta">Strength / mobility / control</div></div>
+            <span class="tag">Build</span>
+          </div>
+          <div class="video">Yoga With Tim - 30 Minute Full Body Yoga for Strength &amp; Flexibility</div>
+          <p>The controlled build day: core, hips, legs, shoulders, and enough heat without treating yoga as a test.</p>
+          <div class="buttons">
+            <a class="btn" href="https://www.youtube.com/watch?v=TjpGd36zTd4" target="_blank" rel="noopener">Open video</a>
+            <a class="btn secondary" href="https://www.youtube.com/results?search_query=Ari+Hunter+yoga+strong+flow+30+minutes" target="_blank" rel="noopener">Ari backup</a>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="topline">
+            <div><div class="day-name">Friday</div><div class="meta">Mobility / hips / prime</div></div>
+            <span class="tag clay">Light</span>
+          </div>
+          <div class="video">Charlie Follows - 30 Min Beginner Yoga | Gentle Full Body Yoga Flow</div>
+          <p>Keeps you moving before Saturday without making the legs heavy. If it feels too much, swap for a hips-only mobility class.</p>
+          <div class="buttons">
+            <a class="btn" href="https://www.youtube.com/watch?v=QcsvuCQd53k" target="_blank" rel="noopener">Open video</a>
+            <a class="btn secondary" href="https://www.youtube.com/results?search_query=beginner+yoga+hips+mobility+30+minutes" target="_blank" rel="noopener">Backup search</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="atomic">
+      <div class="section-head">
+        <div>
+          <h2>Atomic Habits System</h2>
+          <p>The goal is to make the desired action obvious, easy, attractive, and satisfying.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="habit">
+          <div class="law">1</div>
+          <div>
+            <h3>Make it obvious</h3>
+            <p><strong>Implementation intention:</strong> on Sun/Wed/Fri at 7:30 AM, after bathroom/teeth and before opening messages, start the yoga video. On other days, start the 15-minute meditation timer at 7:30 AM and 9:30 PM.</p>
+          </div>
+        </div>
+        <div class="habit">
+          <div class="law">2</div>
+          <div>
+            <h3>Make it easy</h3>
+            <p>Mat stays visible the night before. Phone opens directly to this plan or the video. Minimum version: 2 minutes on the mat or 3 mindful breaths. That keeps the chain alive.</p>
+          </div>
+        </div>
+        <div class="habit">
+          <div class="law">3</div>
+          <div>
+            <h3>Make it attractive</h3>
+            <p>Pair the start with something you like: coffee ready, good lighting, same playlist before practice, or a post-yoga shower. The cue should feel like entering a small ritual, not obeying homework.</p>
+          </div>
+        </div>
+        <div class="habit">
+          <div class="law">4</div>
+          <div>
+            <h3>Make it satisfying</h3>
+            <p>Track only one mark per day: <code>Y</code> for yoga, <code>M</code> for meditation, or <code>MIN</code> for minimum version. Never miss twice. A weak day still counts if you touch the habit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="meditation">
+      <div class="section-head">
+        <div>
+          <h2>Meditation Defaults</h2>
+          <p>Use timer-based unguided sits as the default. Guided is allowed when resistance is high.</p>
+        </div>
+      </div>
+      <table class="table">
+        <thead><tr><th>Day Type</th><th>Default</th><th>Fallback</th></tr></thead>
+        <tbody>
+          <tr><td>Yoga days</td><td>30 minutes immediately after yoga.</td><td>10 minutes if the morning is squeezed.</td></tr>
+          <tr><td>Non-yoga days</td><td>15 minutes at 7:30 AM and 15 minutes at 9:30 PM.</td><td>3 mindful breaths at the scheduled time.</td></tr>
+          <tr><td>Bad day</td><td>Do the minimum and stop negotiating.</td><td>Mark <code>MIN</code>. Resume normal plan next session.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="back">
+      <div class="section-head">
+        <div>
+          <h2>Back-Aware Decision Rules</h2>
+          <p>This keeps the plan reliable without ignoring useful body feedback.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <ul class="clean">
+            <li><span class="dot">G</span><span><strong>Green:</strong> 0-2/10 discomfort, no sharpness, no next-day worsening. Keep the video.</span></li>
+          </ul>
+        </div>
+        <div class="card yellow">
+          <ul class="clean">
+            <li><span class="dot">Y</span><span><strong>Yellow:</strong> around 3/10, lingering discomfort, or guarded movement. Modify more next time.</span></li>
+          </ul>
+        </div>
+        <div class="card red">
+          <ul class="clean">
+            <li><span class="dot">R</span><span><strong>Red:</strong> sharp pain, catching, leg symptoms, numbness, tingling, weakness, or flare. Stop that pose or video.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div class="card">
+          <h3>Bias toward</h3>
+          <ul>
+            <li>Cat/cow style mobility</li>
+            <li>Low cobra or sphinx instead of aggressive backbends</li>
+            <li>Hip mobility, glute engagement, and core control</li>
+            <li>Bent-knee modifications in folds and hamstring work</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Avoid for now</h3>
+          <ul>
+            <li>Deep backbend, heart-opener, or backbend-intensive classes</li>
+            <li>Forcing twists, folds, or lunges to end range</li>
+            <li>Using Friday yoga as toughness training before soccer</li>
+            <li>Changing all three videos at once</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="integration">
+      <div class="section-head">
+        <div>
+          <h2>Integration Plan</h2>
+          <p>Direct WhatsApp, Google Tasks, and Google Calendar integrations need account/API connection. These files are the simple, reliable first version.</p>
+        </div>
+      </div>
+      <table class="table">
+        <thead><tr><th>Tool</th><th>Use Now</th><th>Upgrade Later</th></tr></thead>
+        <tbody>
+          <tr><td>Google Calendar</td><td>Import <a href="yoga-habit-calendar.ics" download><code>yoga-habit-calendar.ics</code></a> for the 4-week starter schedule.</td><td>Connect Google Calendar API for automatic edits and adaptive reminders.</td></tr>
+          <tr><td>Google Tasks</td><td>Use <a href="yoga-habit-tasks.csv" download><code>yoga-habit-tasks.csv</code></a> as a checklist source or recreate the five recurring tasks manually.</td><td>Connect Google Tasks API or Zapier/Make to create recurring task instances.</td></tr>
+          <tr><td>WhatsApp</td><td>Use phone reminders or a pinned WhatsApp chat with the daily check-in prompt.</td><td>Use WhatsApp Business/Twilio or Zapier for scheduled messages.</td></tr>
+          <tr><td>Codex</td><td>Ask Codex to check in weekly and help adjust videos after week 4.</td><td>Add a recurring Codex automation once you choose check-in timing.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>Combined from the two yoga plans, using the Sun/Wed/Fri rhythm and the lower-decision structure from yoga-2.</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,130 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Codex//Yoga Habit Plan//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Yoga Recovery Meditation Habit
+X-WR-TIMEZONE:Australia/Sydney
+BEGIN:VTIMEZONE
+TZID:Australia/Sydney
+BEGIN:STANDARD
+DTSTART:20260405T030000
+TZOFFSETFROM:+1100
+TZOFFSETTO:+1000
+TZNAME:AEST
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20261004T020000
+TZOFFSETFROM:+1000
+TZOFFSETTO:+1100
+TZNAME:AEDT
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:yoga-recovery-sunday-20260712@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Recovery yoga + meditation
+DTSTART;TZID=Australia/Sydney:20260712T073000
+DTEND;TZID=Australia/Sydney:20260712T083500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=SU
+DESCRIPTION:30 min gentle recovery yoga, then 30 min meditation. Cue: move from hips, ribs down, spine long. Minimum version: 2 minutes on the mat.
+END:VEVENT
+BEGIN:VEVENT
+UID:yoga-strength-wednesday-20260715@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Strength mobility yoga + meditation
+DTSTART;TZID=Australia/Sydney:20260715T073000
+DTEND;TZID=Australia/Sydney:20260715T083500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=WE
+DESCRIPTION:30 min controlled strength/mobility yoga, then 30 min meditation. Minimum version: 2 minutes on the mat.
+END:VEVENT
+BEGIN:VEVENT
+UID:yoga-mobility-friday-20260717@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Mobility prime yoga + meditation
+DTSTART;TZID=Australia/Sydney:20260717T073000
+DTEND;TZID=Australia/Sydney:20260717T083500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=FR
+DESCRIPTION:30 min light mobility yoga, then 30 min meditation. Keep legs fresh for Saturday soccer. Minimum version: 2 minutes on the mat.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-monday-am-20260713@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260713T073000
+DTEND;TZID=Australia/Sydney:20260713T074500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=MO
+DESCRIPTION:Morning meditation. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-monday-pm-20260713@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260713T213000
+DTEND;TZID=Australia/Sydney:20260713T214500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=MO
+DESCRIPTION:Evening meditation. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-tuesday-am-20260714@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260714T073000
+DTEND;TZID=Australia/Sydney:20260714T074500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=TU
+DESCRIPTION:Morning meditation. Soccer training day. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-tuesday-pm-20260714@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260714T213000
+DTEND;TZID=Australia/Sydney:20260714T214500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=TU
+DESCRIPTION:Evening meditation. If training runs late, do 3 mindful breaths before sleep.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-thursday-am-20260716@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260716T073000
+DTEND;TZID=Australia/Sydney:20260716T074500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=TH
+DESCRIPTION:Morning meditation. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-thursday-pm-20260716@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260716T213000
+DTEND;TZID=Australia/Sydney:20260716T214500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=TH
+DESCRIPTION:Evening meditation. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-saturday-am-20260718@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260718T073000
+DTEND;TZID=Australia/Sydney:20260718T074500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=SA
+DESCRIPTION:Morning meditation. Match day wins. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:meditation-saturday-pm-20260718@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Meditation 15 min
+DTSTART;TZID=Australia/Sydney:20260718T213000
+DTEND;TZID=Australia/Sydney:20260718T214500
+RRULE:FREQ=WEEKLY;COUNT=4;BYDAY=SA
+DESCRIPTION:Evening meditation after soccer day. Minimum version: 3 mindful breaths.
+END:VEVENT
+BEGIN:VEVENT
+UID:yoga-week4-review-20260808@codex
+DTSTAMP:20260708T060000Z
+SUMMARY:Review yoga habit plan
+DTSTART;TZID=Australia/Sydney:20260808T100000
+DTEND;TZID=Australia/Sydney:20260808T103000
+DESCRIPTION:Review the first 4 weeks. Keep the rhythm fixed. Change one thing only: video, duration, or progression.
+END:VEVENT
+END:VCALENDAR
